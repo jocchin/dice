@@ -2,14 +2,20 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>サイコロ確率ツール</title>
+<title>サイコロ確率ツール（完全版）</title>
 </head>
 <body>
 
-<h2>① ○が出る確率（少なくとも1回）</h2>
+<h2>① 条件に合う確率</h2>
 
 サイコロの数：
 <input type="number" id="diceCount1" value="1" min="1" max="5">
+
+条件タイプ：
+<select id="mode">
+  <option value="atLeast">少なくとも1回</option>
+  <option value="all">全部</option>
+</select>
 
 条件：
 <select id="condition">
@@ -21,14 +27,13 @@
 数値（数値選択時）：
 <input type="number" id="targetNumber" value="1" min="1" max="6">
 
-<button onclick="calcAtLeastOne()">計算</button>
+<button onclick="calc()">計算</button>
 
 <p id="result1"></p>
 
-
 <hr>
 
-<h2>② 合計が○以上 / 以下 / ちょうど</h2>
+<h2>② 合計の確率</h2>
 
 サイコロの数：
 <input type="number" id="diceCount2" value="1" min="1" max="5">
@@ -47,12 +52,11 @@
 
 <p id="result2"></p>
 
-
 <script>
-function calcAtLeastOne() {
+function calc() {
     let n = Number(document.getElementById("diceCount1").value);
+    let mode = document.getElementById("mode").value;
     let condition = document.getElementById("condition").value;
-    let target = Number(document.getElementById("targetNumber").value);
 
     let p;
 
@@ -64,7 +68,13 @@ function calcAtLeastOne() {
         p = 1/6;
     }
 
-    let result = 1 - Math.pow(1 - p, n);
+    let result;
+
+    if (mode === "atLeast") {
+        result = 1 - Math.pow(1 - p, n);
+    } else if (mode === "all") {
+        result = Math.pow(p, n);
+    }
 
     document.getElementById("result1").innerText =
         "確率：" + (result * 100).toFixed(2) + "%";
