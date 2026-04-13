@@ -1,1 +1,109 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>サイコロ確率ツール</title>
+</head>
+<body>
 
+<h2>① ○が出る確率（少なくとも1回）</h2>
+
+サイコロの数：
+<input type="number" id="diceCount1" value="1" min="1" max="5">
+
+条件：
+<select id="condition">
+  <option value="even">偶数</option>
+  <option value="odd">奇数</option>
+  <option value="number">数値</option>
+</select>
+
+数値（数値選択時）：
+<input type="number" id="targetNumber" value="1" min="1" max="6">
+
+<button onclick="calcAtLeastOne()">計算</button>
+
+<p id="result1"></p>
+
+
+<hr>
+
+<h2>② 合計が○以上 / 以下 / ちょうど</h2>
+
+サイコロの数：
+<input type="number" id="diceCount2" value="1" min="1" max="5">
+
+条件：
+<select id="sumCondition">
+  <option value="以上">以上</option>
+  <option value="以下">以下</option>
+  <option value="ちょうど">ちょうど</option>
+</select>
+
+合計値：
+<input type="number" id="targetSum" value="1">
+
+<button onclick="calcSum()">計算</button>
+
+<p id="result2"></p>
+
+
+<script>
+function calcAtLeastOne() {
+    let n = Number(document.getElementById("diceCount1").value);
+    let condition = document.getElementById("condition").value;
+    let target = Number(document.getElementById("targetNumber").value);
+
+    let p;
+
+    if (condition === "even") {
+        p = 3/6;
+    } else if (condition === "odd") {
+        p = 3/6;
+    } else {
+        p = 1/6;
+    }
+
+    let result = 1 - Math.pow(1 - p, n);
+
+    document.getElementById("result1").innerText =
+        "確率：" + (result * 100).toFixed(2) + "%";
+}
+
+
+function calcSum() {
+    let n = Number(document.getElementById("diceCount2").value);
+    let cond = document.getElementById("sumCondition").value;
+    let target = Number(document.getElementById("targetSum").value);
+
+    let total = 0;
+    let success = 0;
+
+    function dfs(count, sum) {
+        if (count === n) {
+            total++;
+            if (
+                (cond === "以上" && sum >= target) ||
+                (cond === "以下" && sum <= target) ||
+                (cond === "ちょうど" && sum === target)
+            ) {
+                success++;
+            }
+            return;
+        }
+        for (let i = 1; i <= 6; i++) {
+            dfs(count + 1, sum + i);
+        }
+    }
+
+    dfs(0, 0);
+
+    let result = success / total;
+
+    document.getElementById("result2").innerText =
+        "確率：" + (result * 100).toFixed(2) + "%";
+}
+</script>
+
+</body>
+</html>
